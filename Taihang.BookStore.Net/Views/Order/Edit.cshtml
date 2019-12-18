@@ -1,0 +1,27 @@
+﻿@model Taihang.BookStore.Net.Models.Order
+
+@{
+    ViewBag.Title = "订单操作";
+
+    string nextStep = ViewBag.NextStep;
+}
+
+<br />
+<br />
+<h3>可使用本页完成订单的后续操作</h3>
+<br />
+<br />
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    @Html.HiddenFor(model => model.ID)
+    @Html.HiddenFor(model => model.OrderState)
+
+
+    if (!string.IsNullOrEmpty(nextStep))
+    {
+        <input type="submit" value="@nextStep" class="btn btn-info" />
+    }
+}

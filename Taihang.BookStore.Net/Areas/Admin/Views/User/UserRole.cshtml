@@ -1,0 +1,29 @@
+﻿@model IEnumerable<Taihang.BookStore.Net.Areas.Admin.Models.UserRolesViewModel>
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Dialog.cshtml";
+    string userID = ViewBag.UserID ?? "";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("userID", userID)
+
+    foreach (var item in Model)
+    {
+        <div class="checkbox col-sm-offset-2">
+            <label>
+                @if (item.Selected)
+                {
+                    <input type="checkbox" name="selectRoles" value="@item.Name" checked> @item.Name
+                }
+                else
+                {
+                    <input type="checkbox" name="selectRoles" value="@item.Name"> @item.Name
+                }
+
+            </label>
+        </div>
+    }
+}

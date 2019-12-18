@@ -1,0 +1,203 @@
+﻿@using PagedList;
+@using PagedList.Mvc;
+@using Taihang.BookStore.Net.Models;
+
+@model IPagedList<Book>
+
+@{
+    ViewBag.Title = "图书管理";
+
+    string searchKey = ViewBag.SearchKey ?? "";
+    int selectedCategory = ViewBag.SelectedCategory ?? 0;
+    int pageNumber = ViewBag.PageNumber ?? 1;
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("pageNumber", pageNumber)
+    <div class="row">
+        <div class="col-md-8">
+        </div>
+        <div class="col-md-4">
+            <button type="button" class="btn btn-info" id="btnAddBook">添加图书</button>
+            <button type="button" class="btn btn-info" id="btnManageCategory">分类管理</button>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-inline">
+                <div class="form-group">
+                    @Html.DropDownList("CategoryID", ViewBag.BookCategory as List<SelectListItem>, htmlAttributes: new { @class = "form-control" })
+                    <input type="text" class="form-control" id="searchKey" name="searchKey" value="@searchKey">
+                    <button type="submit" class="btn btn-info" name="command" value="Search">搜索</button>
+                    <button type="button" class="btn btn-info" onclick="location.href='/Admin/Book/Index'">清空</button>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-info" name="command" value="Enable">启用选中</button>
+            <button type="submit" class="btn btn-info" name="command" value="Disable">禁用选中</button>
+        </div>
+    </div>
+
+    <br />
+
+    <table class="table table-hover">
+        <tr>
+            <th>
+                <input type="checkbox" id="cboxSelectAll"> 全选
+            </th>
+            <th>
+                封面
+            </th>
+            <th>
+                书名
+            </th>
+            <th>
+                作者
+            </th>
+            <th>
+                价格
+            </th>
+            <th>
+                类别
+            </th>
+            <th>
+                状态
+            </th>
+            <th>
+
+            </th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <input type="checkbox" name="selectedBooks" value="@item.ID">
+                </td>
+                <td>
+                    <img class="img-responsive" src="/Imgs/@item.Img" width="50" height="50" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Author)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Category.Name)
+                </td>
+                <td>
+                    @if (item.Disable)
+                    {
+                        <img src="~/Imgs/disable.png" width="32" height="32" />
+                    }
+                    else
+                    {
+                        <img src="~/Imgs/ok.png" width="32" height="32" />
+                    }
+                </td>
+                <td>
+                    <button type="button" class="btn btn-info" onclick="updateBook('@item.ID')">修改</button>
+                    <button type="button" class="btn btn-info" onclick="showDetail('@item.ID')">详情</button>
+                </td>
+            </tr>
+        }
+    </table>
+
+    if (Model.PageCount > 1)
+    {
+        @Html.PagedListPager(Model, p => Url.Action("Index", new { searchKey = ViewBag.SearchKey, selectedCategory = ViewBag.SelectedCategory, pageNumber = p }), PagedListRenderOptions.OnlyShowFivePagesAtATime);
+    }
+}
+
+@section scripts
+{
+    <script>
+        var layer = null; // 弹窗 layer
+
+        $(function () {
+            // layui的弹出层
+            layui.use('layer', function () {
+                layer = layui.layer;
+            });
+
+            // 全选操作
+            $("#cboxSelectAll").on("click", function () {
+                $("input[name='selectedBooks']").prop('checked', $("#cboxSelectAll").prop('checked'));
+            });
+
+            // 切换图书分类
+            $("#CategoryID").on("change", changeCategory);
+
+            // 分类管理
+            $("#btnManageCategory").on("click", manageCategory);
+
+            // 添加图书
+            $("#btnAddBook").on("click", addBook);
+        });
+
+        function changeCategory() {
+            var search = $("#searchKey").val();
+            var category = $("#CategoryID").val();
+
+            location.href = "/Admin/Book/Index?searchKey=" + search + "&selectedCategory=" + category;
+        }
+
+        // 详情
+        function showDetail(id) {
+            location.href = "/Admin/Book/Details/" + id;
+        }
+
+        // 类别管理
+        function manageCategory() {
+            location.href = "/Admin/Book/ManageCategory";
+        }
+
+        // 添加
+        function addBook() {
+            roleAddOrUpdate("添加图书", "/Admin/Book/Create", "/Admin/Book/Create", "/Admin/Book/Index");
+        }
+
+        // 修改
+        function updateBook(id) {
+            roleAddOrUpdate("修改图书", "/Admin/Book/Edit/" + id, "/Admin/Book/Edit", "/Admin/Book/Index");
+        }
+
+        // 创建或更新对话框
+        function roleAddOrUpdate(title, get_action, post_action, reload_url) {
+            layer.open({
+                title: title,
+                type: 2,
+                area: ['800px', '600px'],
+                content: get_action,
+                end: function () {
+                    var result = layer.DialogResult;
+                    if (result) {
+                        // 使用Ajax发送HTTP POST 请求
+                        $.ajax({
+                            type: "POST",
+                            url: post_action,
+                            data: result,// 从对话框返回内容
+                            contentType: false, // 不指定上传内容的格式
+                            processData: false, // 不处理上传数据
+                            dataType: 'json', // 期望从服务器返回的类型
+                            success: function (data) {
+                                location.href = reload_url; // 重新加载
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    </script>
+}

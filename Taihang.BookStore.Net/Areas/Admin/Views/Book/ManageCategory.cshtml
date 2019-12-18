@@ -1,0 +1,91 @@
+﻿@model IEnumerable<Taihang.BookStore.Net.Models.BookCategory>
+
+@{
+    ViewBag.Title = "图书类别";
+}
+
+
+
+<div class="row">
+    <div class="col-md-2"><button type="button" class="btn btn-info" id="btnAdd" onclick="addCategory()">添加</button></div>
+    <div class="col-md-2 col-md-offset-6">@Html.ActionLink("返回", "Index")</div>
+</div>
+<br />
+<table class="table table-hover">
+    <tr>
+        <th>
+            图书类别
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                <button type="button" class="btn btn-info" onclick="updateCategory('@item.ID', '@item.Name')">修改</button>
+            </td>
+        </tr>
+    }
+</table>
+
+
+@section scripts
+{
+    <script>
+        var layer = null; // 弹窗 layer
+
+        $(function () {
+            // layui的弹出层
+            layui.use('layer', function () {
+                layer = layui.layer;
+            });
+        });
+
+        function addCategory() {
+            var dlgHtml = '<input type="text" id="categoryName" style="margin: 10px">';
+
+            layer.open({
+                type: 1,
+                title: '添加分类',
+                content: dlgHtml,
+                btn: ['确定', '取消'],
+                yes: function (index, layero) {
+                    var name = $("#categoryName").val();
+
+                    $.get("/Admin/Book/AddCategory",
+                        { Name: name },
+                        function (data) {
+                            location.href = "/Admin/Book/ManageCategory";
+                        });
+                    layer.close(index);
+                }
+            });
+        }
+
+        function updateCategory(id, name) {
+            var dlgHtml = '<input type="text" id="categoryName" style="margin: 10px" value="' + name + '">';
+
+            layer.open({
+                type: 1,
+                title: '修改分类',
+                content: dlgHtml,
+                btn: ['确定', '取消'],
+                yes: function (index, layero) {
+                    name = $("#categoryName").val();
+
+                    $.get("/Admin/Book/UpdateCategory",
+                        { ID: id, Name: name },
+                        function (data) {
+                            location.href = "/Admin/Book/ManageCategory";
+                        });
+                    layer.close(index);
+                }
+            });
+        }
+    </script>
+
+}

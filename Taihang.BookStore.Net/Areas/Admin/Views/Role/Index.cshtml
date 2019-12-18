@@ -1,0 +1,146 @@
+﻿@model IEnumerable<Taihang.BookStore.Net.Models.ApplicationRole>
+
+@{
+    ViewBag.Title = "角色管理";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="row">
+        <div class="col-md-8">
+            <button type="submit" class="btn btn-info" name="command" value="Enable">启用</button>
+            <button type="submit" class="btn btn-info" name="command" value="Disable">禁用</button>
+        </div>
+        <div class="col-md-2">
+            <button type="button" class="btn btn-info" id="btnCreate">创建</button>
+        </div>
+    </div>
+
+    <br />
+
+    <table class="table table-hover">
+        <tr>
+            <th>
+                <input type="checkbox" id="cboxSelectAll"> 全选
+            </th>
+            <th>
+                角色
+            </th>
+            <th>
+                说明
+            </th>
+            <th>
+                状态
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <input type="checkbox" name="selectedRoles" value="@item.Id">
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Describe)
+                </td>
+                <td>
+                    @if (item.Disable)
+                    {
+                        <img src="~/Imgs/disable.png" width="32" height="32" />
+                    }
+                    else
+                    {
+                        <img src="~/Imgs/ok.png" width="32" height="32" />
+                    }
+                </td>
+                <td>
+                    <button type="button" class="btn btn-info" onclick="showDetail('@item.Id')">详情</button>
+                    <button type="button" class="btn btn-info" onclick="updateRole('@item.Id')">修改</button>
+                    <button type="button" class="btn btn-info" onclick="deleteRole('@item.Id')">删除</button>
+                </td>
+            </tr>
+        }
+    </table>
+}
+
+@section scripts
+{
+    <script>
+        var layer = null; // 弹窗 layer
+
+        $(function () {
+            // layui的弹出层
+            layui.use('layer', function () {
+                layer = layui.layer;
+            });
+
+            // 全选操作
+            $("#cboxSelectAll").on("click", function () {
+                $("input[name='selectedRoles']").prop('checked', $("#cboxSelectAll").prop('checked'));
+            });
+
+            // 创建角色
+            $("#btnCreate").on("click", createRole);
+        });
+
+        // 详情
+        function showDetail(id) {
+            location.href = "/Admin/Role/Details/" + id;
+        }
+
+        // 创建角色
+        function createRole() {
+            roleAddOrUpdate("创建角色", "/Admin/Role/Create", "/Admin/Role/Create");
+        }
+
+        // 更新角色
+        function updateRole(id) {
+            roleAddOrUpdate("修改角色", "/Admin/Role/Edit/" + id, "/Admin/Role/Edit");
+        }
+
+        // 删除角色
+        function deleteRole(id) {
+            layer.confirm('你确定要删除吗?', { icon: 3, title: '提示' }, function (index) {
+                $.get("/Admin/Role/Delete/" + id, function (data) {
+                    location.href = "/Admin/Role/Index"; // 重新加载
+                });
+
+                layer.close(index);
+            });
+        }
+
+        // 角色创建或更新
+        function roleAddOrUpdate(title, get_action, post_action) {
+            layer.open({
+                title: title,
+                type: 2,
+                area: ['800px', '400px'],
+                content: get_action,
+                end: function () {
+                    var result = layer.DialogResult;
+                    if (result) {
+                        // 使用Ajax发送HTTP POST 请求
+                        $.ajax({
+                            type: "POST",
+                            url: post_action,
+                            data: result,// 从对话框返回内容
+                            contentType: false, // 不指定上传内容的格式
+                            processData: false, // 不处理上传数据
+                            dataType: 'json', // 期望从服务器返回的类型
+                            success: function (data) {
+                                location.href = "/Admin/Role/Index"; // 重新加载
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+    </script>
+}

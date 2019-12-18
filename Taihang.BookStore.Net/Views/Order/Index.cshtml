@@ -1,0 +1,65 @@
+﻿@using Taihang.BookStore.Net.Models;
+
+@model IEnumerable<Order>
+
+@{
+    ViewBag.Title = "我的订单";
+}
+
+<h2>我的订单</h2>
+<br />
+
+<table class="table table-hover">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ID)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TotalSum)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.OrderDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.StateDescribe)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        string actionName = null;
+        switch (item.OrderState)
+        {
+            case OrderStateEnum.已下单:
+                actionName = "支付";
+                break;
+            case OrderStateEnum.已付款:
+                actionName = "收货";
+                break;
+        }
+
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalSum)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StateDescribe)
+            </td>
+            <td>
+                @Html.ActionLink("详情", "Details", new { id = item.ID }, new { @class = "btn btn-info" })
+
+                @if (!string.IsNullOrEmpty(actionName))
+                {
+                    @Html.ActionLink(actionName, "Edit", new { id = item.ID }, new { @class = "btn btn-info" })
+                }
+            </td>
+        </tr>
+    }
+</table>

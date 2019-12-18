@@ -1,0 +1,36 @@
+﻿@{
+    ViewBag.Title = "首页";
+}
+
+<div class="jumbotron">
+    <h1>BookStore 简介</h1>
+    <p class="lead">
+        BookStore 是使用 ASP.NET MVC 技术构建的一个功能完整的教学模型。
+        分为前端和后台2大部分，演示了一个购物平台所需的各个功能模块。
+    </p>
+    <p>@Html.ActionLink("开始", "Index", "Book", null, new { @class = "btn btn-primary btn-lg" })</p>
+</div>
+
+<br />
+<p class="bg-info">使用前台功能，自己注册账号即可。使用后台功能，账号：xiao4407@163.com，密码：Admin#123。</p>
+<br />
+<div class="row">
+    <div class="col-md-6">
+        <h3 class="text-primary">前端功能</h3>
+        <ul class="list-group">
+            <li class="list-group-item">1 用户注册、登录，个人信息维护</li>
+            <li class="list-group-item">2 图书列表、搜索、分页</li>
+            <li class="list-group-item">3 购物车</li>
+            <li class="list-group-item">4 订单</li>
+        </ul>
+    </div>
+    <div class="col-md-6">
+        <h3 class="text-primary">后台功能</h3>
+        <ul class="list-group">
+            <li class="list-group-item">1 角色管理：BookStore使用2个角色(Admins, Users)，只有Admins能登录后台</li>
+            <li class="list-group-item">2 用户管理：主要是用户启用、禁用和角色管理</li>
+            <li class="list-group-item">3 图书管理：图书CRUD和类别管理</li>
+        </ul>
+    </div>
+</div>
+

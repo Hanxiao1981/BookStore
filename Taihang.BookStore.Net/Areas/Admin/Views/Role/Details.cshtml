@@ -1,0 +1,45 @@
+﻿@model Taihang.BookStore.Net.Models.ApplicationRole
+
+@{
+    ViewBag.Title = "角色详情";
+}
+
+<div>
+    <h4><b>角色详情</b></h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Describe)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Describe)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Disable)
+        </dt>
+
+        <dd>
+            @if (Model.Disable)
+            {
+                <img src="~/Imgs/disable.png" width="32" height="32" />
+            }
+            else
+            {
+                <img src="~/Imgs/ok.png" width="32" height="32" />
+            }
+        </dd>
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("返回", "Index", null, new { @class = "btn btn-info" })
+</p>

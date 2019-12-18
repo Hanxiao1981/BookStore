@@ -1,0 +1,88 @@
+﻿@using Taihang.BookStore.Net.Models;
+
+@model Order
+
+@{
+    ViewBag.Title = "Details";
+
+    string actionName = null;
+
+    switch (Model.OrderState)
+    {
+        case OrderStateEnum.已下单:
+            actionName = "支付";
+            break;
+        case OrderStateEnum.已付款:
+            actionName = "收货";
+            break;
+    }
+}
+
+<h2 class="text-primary">订单详情</h2>
+
+<br />
+<h3 class="text-info">收货信息</h3>
+
+<div class="row">
+    <div class="col-md-5 col-md-offset-1"><p><b>收货人:</b>@Model.ReciverName</p></div>
+    <div class="col-md-5"><p><b>联系方式:</b>@Model.ReciverPhone</p></div>
+</div>
+<div class="row">
+    <div class="col-md-5 col-md-offset-1"><p><b>收货地址:</b>@Model.PostAddr</p></div>
+    <div class="col-md-5"><p><b>订单状态:</b>@Model.StateDescribe</p></div>
+</div>
+
+<br />
+<h3 class="text-info">订单明细</h3>
+<br />
+
+<table class="table table-hover">
+    <tr>
+        <th>
+            封面
+        </th>
+        <th>
+            书名
+        </th>
+        <th>
+            价格
+        </th>
+        <th>
+            数量
+        </th>
+    </tr>
+
+    @foreach (var item in Model.OrderItems)
+    {
+        <tr>
+            <td>
+                <a href="@Url.Action("Details", "Book", new { id = item.BookID })">
+                    <img class="img-responsive" src="/Imgs/@item.Img" width="50" height="50" />
+                </a>
+            </td>
+            <td>
+                @Html.ActionLink(item.Book.Name, "Details", "Book", new { id = item.BookID }, null)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Count)
+            </td>
+        </tr>
+    }
+</table>
+
+<br />
+
+<div class="row">
+    <div class="col-md-8"></div>
+    <div class="col-md-2"><b>合计：</b><span id="cart_total_price">@Model.TotalSum</span></div>
+
+    @if (!string.IsNullOrEmpty(actionName))
+    {
+        <div class="col-md-2">
+            @Html.ActionLink(actionName, "Edit", new { id = Model.ID }, new { @class = "btn btn-info" })
+        </div>
+    }
+</div>

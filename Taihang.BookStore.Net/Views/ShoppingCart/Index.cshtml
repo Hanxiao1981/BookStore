@@ -1,0 +1,117 @@
+﻿@model IEnumerable<Taihang.BookStore.Net.Models.CartItem>
+
+@{
+    ViewBag.Title = "购物车";
+}
+
+@if (Model.Count() > 0)
+{
+    <h2>购物车</h2>
+
+    <br />
+
+    <table class="table table-hover">
+        <tr>
+            <th>
+                封面
+            </th>
+            <th>
+                书名
+            </th>
+            <th>
+                价格
+            </th>
+            <th>
+                数量
+            </th>
+            <th>
+
+            </th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <a href="@Url.Action("Details", "Book", new { id = item.BookID })">
+                        <img class="img-responsive" src="/Imgs/@item.Book.Img" width="50" height="50" />
+                    </a>
+                </td>
+                <td>
+                    @Html.ActionLink(item.Book.Name, "Details", "Book", new { id = item.BookID }, null)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Book.Price)
+                </td>
+                <td>
+                    <div class="form-inline">
+                        <button type="button" class="btn btn-default" onclick="subtractQuantity('@item.BookID')">-</button>
+                        <input type="text" class="form-control" id="txt_@item.BookID" value="@item.Count" style="width:50px">
+                        <button type="button" class="btn btn-default" onclick="addQuantity('@item.BookID')">+</button>
+                    </div>
+                </td>
+                <td>
+                    @Html.ActionLink("移除", "RemoveFromCart", new { id = item.BookID }, new { @class = "btn btn-info" })
+                </td>
+            </tr>
+        }
+    </table>
+
+    <br />
+
+    <div class="row">
+        <div class="col-md-8"></div>
+        <div class="col-md-2"><b>合计：</b><span id="cart_total_price">@ViewBag.TotalPrice</span></div>
+        <div class="col-md-2">@Html.ActionLink("生成订单", "Create", "Order", null, new { @class = "btn btn-info" })</div>
+    </div>
+}
+else
+{
+    <h3>你的购物车是空的</h3>
+}
+
+
+@section scripts
+{
+    <script>
+        var layer = null; // 弹窗 layer
+
+        $(function () {
+            // layui的弹出层
+            layui.use('layer', function () {
+                layer = layui.layer;
+            });
+        });
+
+        function addQuantity(book_id) {
+            var id = "#txt_" + book_id;
+            var quantity = parseInt($(id).val());
+            var url = "/ShoppingCart/AddQuantity/" + book_id;
+
+            $.get(url, function (data) {
+                quantity++;
+
+                $(id).val(quantity);
+                $("#cart_total_price").text(data.total_price);
+            });
+        }
+
+        function subtractQuantity(book_id) {
+            var id = "#txt_" + book_id;
+            var quantity = parseInt($(id).val());
+
+            if (quantity > 1) {
+                var url = "/ShoppingCart/SubtractQuantity/" + book_id;
+                $.get(url, function (data) {
+                    quantity--;
+
+                    $(id).val(quantity);
+                    $("#cart_total_price").text(data.total_price);
+                });
+            }
+            else {
+                layer.msg('已经是最小值了');
+            }
+        }
+    </script>
+}

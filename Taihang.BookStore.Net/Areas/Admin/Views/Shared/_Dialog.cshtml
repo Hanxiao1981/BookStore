@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=750, initial-scale=1">
+
+    <title>对话框 - @ViewContext.RouteData.Values["action"] </title>
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <div class="container">        
+        <div class="row">
+            @RenderBody()
+        </div>
+        <div class="row">
+            <div class="col-sm-1 col-sm-offset-2">
+                <button type="button" class="btn btn-primary" id="btnOK">确定</button>
+            </div>
+            <div class="col-sm-1">
+                <button type="button" class="btn btn-default" id="btnCancel">取消</button>
+            </div>
+        </div>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+
+    <script>
+        var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+
+        $(function () {
+            $("#btnOK").on("click", function () {
+                parent.layer.DialogResult = new FormData($("form")[0]); // 设置对话框返回值
+
+                parent.layer.close(index); // 关闭对话框
+            })
+
+            $("#btnCancel").on("click", function () {
+                parent.layer.DialogResult = null;  // 设置对话框返回值
+
+                parent.layer.close(index); // 关闭对话框
+            })
+        });
+    </script>
+</body>
+</html>

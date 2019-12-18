@@ -1,0 +1,37 @@
+﻿@model Taihang.BookStore.Net.Models.UserProfile
+
+@{
+    ViewBag.Title = "个人信息";
+}
+
+<h2>个人信息</h2>
+
+<dl class="dl-horizontal">
+    <dt>
+        @Html.DisplayNameFor(model => model.RealName)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.RealName)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.Phone)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.Phone)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.Address)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.Address)
+    </dd>
+</dl>
+
+<p class="col-md-offset-2">
+    @Html.ActionLink("修改", "Edit", new { id = Model.ID }, new { @class="btn btn-info"})
+</p>

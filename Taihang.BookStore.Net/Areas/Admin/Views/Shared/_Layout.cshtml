@@ -1,0 +1,61 @@
+﻿@{
+    string controller = (string)ViewContext.RouteData.Values["controller"];
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - BookStore管理</title>
+
+    @Styles.Render("~/Plug-in/layui/css")
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("BookStore", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav"></ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="container body-content">
+        <br />
+        <br />
+        <div class="row">
+            <div class="col-md-2">
+                <div class="list-group">
+                    @Html.ActionLink("首页", "Index", "Home", null, new { @class = controller == "Home" ? "list-group-item active" : "list-group-item" })
+                    @Html.ActionLink("角色管理", "Index", "Role", null, new { @class = controller == "Role" ? "list-group-item active" : "list-group-item" })
+                    @Html.ActionLink("用户管理", "Index", "User", null, new { @class = controller == "User" ? "list-group-item active" : "list-group-item" })
+                    @Html.ActionLink("图书管理", "Index", "Book", null, new { @class = controller == "Book" ? "list-group-item active" : "list-group-item" })
+                </div>
+            </div>
+            <div class="col-md-10">
+                @RenderBody()
+            </div>
+        </div>
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - BookStore管理</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/Plug-in/layui/js")
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>
