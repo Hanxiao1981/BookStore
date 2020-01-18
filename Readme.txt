@@ -11,3 +11,5 @@
   (2) 角色管理
   (3) 商品管理
   (4) 订单管理
+
+3 演示地址: http://bookstore.taihang-studio.club/
